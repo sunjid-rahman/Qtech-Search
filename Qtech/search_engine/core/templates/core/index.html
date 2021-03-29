@@ -1,0 +1,109 @@
+<!doctype html>
+{% load static %}
+{% load bootstrap4 %}
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <title>Qtech</title>
+    <link rel="stylesheet" href="{% static 'core/main.css' %}">
+</head>
+
+<body>
+    <form class="row my-2 my-lg-1 g-3" action="{% url 'index' %}" id="search_form" method="post">
+      {% csrf_token %}
+        <div class="col-6 m-5" >
+            <input class="form-control mr-sm-2" name="query" autocomplete="off" spellcheck="false" role="combobox" type="search" placeholder="Search" aria-label="Search" >
+        </div>
+        <div class="col-4 m-5">
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+        </div>
+      </br>
+        <div class="col-2 mx-3">
+            <h4>Keywords</h4>
+          <ul>
+            {% for key,value in keywords.items %}
+              <li>
+                  <input type="checkbox" name="keys" value="{{key}}" id="keyword{{forloop.counter}" />
+                  <label for="keyword{{forloop.counter}}"> <b>{{key}}({{value}})</b> </label>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col-2 mx-3">
+            <h4>User</h4>
+            <ul>
+              {% for user,count in users.items %}
+                <li>
+                    <input type="checkbox" name="creator" value="{{user}}" id="option{{forloop.counter}}"/>{{user}}({{count}})
+                </li>
+              {% endfor %}
+            </ul>
+        </div>
+        <div class="col-2 mx-3">
+            <h4>Time Range</h4>
+          <ul>
+            {% for date in dates %}
+              <li>
+                  <input type="checkbox" name="date" value="{{date}}" id="date{{forloop.counter}}" />{{date}}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col-2 mx-3">
+          <h4>Select Date</h4>
+          <ul>
+            <h5>Start Date</h5>
+              <li>
+                  <input type="date" name="start" value="" placeholder="yy-mm-dd" /></li>
+                  <h5>End Date</h5>
+                  <li>
+                      <input type="date" name="end" value="" /></li>
+          </ul>
+      </div>
+    </form>
+    <div class="col m-5">
+      {% if searched %}
+        {% for result in results %}
+          <h2>
+              <a href=""  style="text-decoration:none">{{result.title}}</a>
+          </h2>
+          <p>
+              {{result.description}}
+          </p>
+          {% empty %}
+            <h3 style="color:red;">No Result Found!!</h3>
+        {% endfor %}
+      {% endif %}
+</div>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<script type="text/javascript">
+$(function() {
+  $("#search_form").submit(function(event) {
+      // Stop form from submitting normally
+      event.preventDefault();
+      var searchForm = $(this);
+      // Send the data using post
+      var posting = $.post( searchForm.attr('action'), searchForm.serialize() );
+      // if success:
+      posting.done(function(data) {
+          // success actions, maybe change submit button to 'friend added' or whatever
+      });
+      // if failure:
+      posting.fail(function(data) {
+          // 4xx or 5xx response, alert user about failure
+      });
+  });
+});
+</script>
+</html>
